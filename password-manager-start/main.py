@@ -2,9 +2,10 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 FONT_NAME = "Courier"
-PATH_TXT = "data.txt"
+PATH_TXT = "data.json"
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -41,26 +42,61 @@ def clear():
     txt_website.focus()
 
 
-def validate(str_website, str_email, str_password):
-    if str_website == "" or str_email == "" or str_password == "":
-        messagebox.showwarning(title="Warning", message=f"Please do not leave any fields empty!!")
-        return False
+def show_no_detail_message():
+    messagebox.showwarning(title="warning", message="No details for the website exists.")
+
+
+def find_password():
+    str_website = txt_website.get()
+    try:
+        with open(PATH_TXT, 'r') as datafile:
+            data = json.load(datafile)
+    except FileNotFoundError:
+        print('file does not exist')
+        show_no_detail_message()
     else:
-        return True
+        if str_website in data :
+            saved_email = data[str_website]["email"]
+            saved_password = data[str_website]["password"]
+            messagebox.showinfo(title=str_website, message=f"Email: {saved_email} \n Password: {saved_password}")
+        else:
+            show_no_detail_message()
 
 
 def save():
     str_website = txt_website.get()
     str_email = txt_email.get()
     str_password = txt_password.get()
-
+    new_data = {
+        str_website: {
+            "email": str_email,
+            "password": str_password
+        }
+    }
     if validate(str_website, str_email, str_password):
         is_ok = messagebox.askokcancel(title=str_website, message=f"These are the details entered: \n Email:{str_email}"
                                                                   f" \nPassword: {str_password}\n Is it OK to save?")
         if is_ok:
-            with open(PATH_TXT, 'a') as datafile:
-                datafile.write(f"{str_website} | {str_email} | {str_password}\n")
-            clear()
+            try:
+                with open(PATH_TXT, 'r') as datafile:
+                    data = json.load(datafile)
+            except FileNotFoundError:
+                with open(PATH_TXT, 'w') as datafile:
+                    print('create file')
+                    json.dump(new_data, datafile, indent=4)
+            else:
+                data.update(new_data)
+                with open(PATH_TXT, 'w') as datafile:
+                    json.dump(data, datafile, indent=4)
+            finally:
+                clear()
+
+def validate(str_website, str_email, str_password):
+    if str_website == "" or str_email == "" or str_password == "":
+        messagebox.showwarning(title="Warning", message=f"Please do not leave any fields empty!!")
+        return False
+    else:
+        return True
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -76,8 +112,11 @@ canvas.grid(row=0, column=1)
 label_website = Label(text="Website:", justify=RIGHT)
 label_website.grid(row=1, column=0)
 
-txt_website = Entry(width=52, justify=LEFT)
+txt_website = Entry(width=32, justify=LEFT)
 txt_website.grid(sticky=W, row=1, column=1, columnspan=2)
+
+button_search = Button(text="Search",width=14,command=find_password)
+button_search.grid(sticky=W, row=1, column=2)
 
 label_email = Label(text="Email/Username:", justify=RIGHT)
 label_email.grid(row=2, column=0)
