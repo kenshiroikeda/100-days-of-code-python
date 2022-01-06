@@ -1,19 +1,24 @@
-# import smtplib
-#
-# my_email = "mail@mail.com"
-#
-# with smtplib.SMTP("smtp.mail.com", port=111) as connection :
-#     connection.starttls()
-#     connection.login(user=my_email, password="password")
-#     connection.sendmail(from_addr=my_email, to_addrs=my_email, msg="Hello")
-#
-
+import smtplib
 import datetime as dt
+import random
+
+MONDAY = 1
+MY_EMAIL = "from@mail.com"
+TO_EMAIL = "to@mail.com"
 
 now = dt.datetime.now()
-year = now.year
-month = now.month
 day_of_week = now.weekday()
 
-day_of_birth = dt.datetime(year=1986, month=12, day=2)
-print(day_of_birth)
+if day_of_week == MONDAY:
+    with open("quotes.txt") as quotes:
+        quotes_list = quotes.readlines()
+
+    message = random.choice(quotes_list)
+
+    with smtplib.SMTP("smtp.mail.com", port=111) as connection:
+        connection.starttls()
+        connection.login(user=MY_EMAIL, password="password")
+        connection.sendmail(from_addr=MY_EMAIL, to_addrs=MY_EMAIL, msg=f"Subject:MondayMotivation\n\n{message}")
+
+else:
+    print("Today is not Monday")
