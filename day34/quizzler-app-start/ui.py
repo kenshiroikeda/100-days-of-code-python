@@ -1,7 +1,6 @@
 from functools import partial
 from tkinter import *
 from quiz_brain import QuizBrain
-import time
 
 THEME_COLOR = "#375362"
 
