@@ -32,6 +32,7 @@ def send_articles(change_rate: float):
         title = article["title"]
         brief = article["content"]
         content = f"{STOCK}:{mark}{change_rate}% \nHeadline:{title} \nBrief:{brief}"
+
         # Optional: Format the SMS message like this:
         """
         TSLA: 🔺2%
@@ -42,13 +43,13 @@ def send_articles(change_rate: float):
         Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
         Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
         """
-
-        message = client.messages \
-            .create(
-            body=content,
-            from_='+11',
-            to='+11'
-        )
+        print(content)
+        # message = client.messages \
+        #     .create(
+        #     body=content,
+        #     from_='+11',
+        #     to='+11'
+        # )
 
 
 def check_stock_value():
@@ -63,21 +64,15 @@ def check_stock_value():
 
     stock_res = requests.get(url=ALPHA_URL, params=stock_param)
     stock_res.raise_for_status()
-    stock_daily_data = stock_res.json()["Time Series (Daily)"]
+    stock_data = stock_res.json()["Time Series (Daily)"]
+    stock_daily_data = [value for (key, value) in stock_data.items()][:2]
 
-    key_list = []
-    for key in stock_daily_data.keys():
-        if len(key_list) > 2:
-            continue
-        else:
-            key_list.append(key)
+    yesterday_close_value = float(stock_daily_data[0]["4. close"])
+    dby_close_value = float(stock_daily_data[1]["4. close"])
 
-    yesterday_close_value = float(stock_daily_data[key_list[0]]["4. close"])
-    dby_close_value = float(stock_daily_data[key_list[1]]["4. close"])
+    change_rate = round(abs(yesterday_close_value - dby_close_value) / yesterday_close_value * 100, 2)
 
-    change_rate = round((yesterday_close_value - dby_close_value) / dby_close_value * 100, 2)
-
-    if change_rate < -1 or 1 < change_rate:
+    if 4 < change_rate:
         send_articles(change_rate)
 
 
