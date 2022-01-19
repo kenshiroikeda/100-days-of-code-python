@@ -42,5 +42,22 @@ kusa_config = {
 
 kusa_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}"
 
-res_kusa = requests.post(url=kusa_endpoint,json=kusa_config,headers=header_config)
-print(res_kusa.text)
+# res_kusa = requests.post(url=kusa_endpoint,json=kusa_config,headers=header_config)
+# print(res_kusa.text)
+
+delete_date="20220117"
+delete_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}/{delete_date}"
+#
+# res_delete = requests.delete(url=delete_endpoint, headers=header_config)
+# print(res_delete.text)
+
+put_date = today.strftime("%Y%m%d")
+today = datetime.datetime.now()
+put_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}/{put_date}"
+put_config = {
+    "quantity": input("How many pages did you read today??")
+}
+
+res_put = requests.put(url=put_endpoint,json=put_config, headers=header_config)
+print(res_put.text)
+
