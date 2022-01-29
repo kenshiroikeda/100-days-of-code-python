@@ -7,16 +7,18 @@ ORIGIN_CITY_IATA = "LON"
 
 fs = FlightSearch()
 dm = DataManager()
-nm = NotificationManager()
-loaded_sheet_data = dm.load_sheet_data()
+dm.login()
 
-
-iata_list = fs.fill_iata_code(loaded_sheet_data)
-dm.update_sheet_data(iata_list)
-
-for destination in iata_list:
-    flight = fs.search_flight(
-        ORIGIN_CITY_IATA,
-        destination["iataCode"]
-    )
+# nm = NotificationManager()
+# loaded_sheet_data = dm.load_sheet_data()
+#
+#
+# iata_list = fs.fill_iata_code(loaded_sheet_data)
+# dm.update_sheet_data(iata_list)
+#
+# for destination in iata_list:
+#     flight = fs.search_flight(
+#         ORIGIN_CITY_IATA,
+#         destination["iataCode"]
+#     )
 
