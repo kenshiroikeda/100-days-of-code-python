@@ -1,10 +1,12 @@
 import os
 import datetime as dt
+
 import requests
 from flight_data import FlightData
 
+
 class FlightSearch:
-    #This class is responsible for talking to the Flight Search API.
+    # This class is responsible for talking to the Flight Search API.
 
     def __init__(self):
         pass
@@ -16,7 +18,7 @@ class FlightSearch:
     FLIGHT_SEARCH_END_POINT = "https://tequila-api.kiwi.com/v2/search"
     LOCATION_END_POINT = "https://tequila-api.kiwi.com/locations/query"
 
-    def search_flight(self, origin_city_cd, destination_city_cd):
+    def search_flight(self, origin_city_cd, destination_city_cd, include_one_stop=False):
         tomorrow = dt.datetime.now() + dt.timedelta(1)
         six_month_later = dt.datetime.now() + dt.timedelta(180)
 
@@ -29,9 +31,11 @@ class FlightSearch:
             "nights_in_dst_to": 28,
             "flight_type": "round",
             "one_for_city": 1,
-            "max_stopovers": 0,
+            "max_stopovers": 1 if include_one_stop else 0,
             "curr": "GBP"
         }
+        if include_one_stop:
+            param["stop_overs"] = "72:00"
 
         res = requests.get(url=self.FLIGHT_SEARCH_END_POINT, params=param, headers=self.HEADER)
         res.raise_for_status()
@@ -40,22 +44,27 @@ class FlightSearch:
             data = res.json()["data"][0]
         except IndexError:
             print(f"No frights found from {origin_city_cd} to {destination_city_cd}.")
-            return None
+            if include_one_stop:
+                return None
+            else:
+                print(f"Start searching include one stop route...")
+                return self.search_flight(origin_city_cd, destination_city_cd, include_one_stop=True)
+        else:
+            flight_data = FlightData(
+                price=data["price"],
+                departure_city=data["route"][0]["cityFrom"],
+                departure_airport_code=data["route"][0]["flyFrom"],
+                destination_city=data["route"][0]["cityTo"],
+                destination_airport_code=data["route"][0]["flyTo"],
+                out_date=data["route"][0]["local_departure"].split("T")[0],
+                return_date=data["route"][1]["local_departure"].split("T")[0],
+                stop_over=param["max_stopovers"],
+                via_city=data["route"][0]["cityTo"] if include_one_stop else "",
+            )
+            print(f"{flight_data.destination_city}:€{flight_data.price}")
+            return flight_data
 
-        flight_data = FlightData(
-            price=data["price"],
-            departure_city=data["route"][0]["cityFrom"],
-            departure_airport_code=data["route"][0]["flyFrom"],
-            destination_city=data["route"][0]["cityTo"],
-            destination_airport_code=data["route"][0]["flyTo"],
-            out_date=data["route"][0]["local_departure"].split("T")[0],
-            return_date=data["route"][1]["local_departure"].split("T")[0],
-        )
-        print(f"{flight_data.destination_city}:€{flight_data.price}")
-        return flight_data
-
-
-    def fill_iata_code(self, city_data):
+    def get_iata_code(self, city_data):
         res_list = []
         for data in city_data:
             param = {

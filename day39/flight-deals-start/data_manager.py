@@ -28,7 +28,7 @@ class DataManager:
         self.user_data = res.json()["users"]
         print(self.user_data)
 
-    def update_sheet_data(self, data_list):
+    def fill_iata_code(self, data_list):
         for idx in range(len(data_list)):
             put_url = self.PRICES_END_POINT + "/" + str(idx + 2)
             sheet_data = data_list[idx]
