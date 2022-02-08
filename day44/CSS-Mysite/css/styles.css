@@ -2,11 +2,20 @@ body {
   margin: 0;
   background-color: #FFF8F3;
   text-align: center;
+  font-family: 'Montserrat', sans-serif;
 }
 h1 {
+  width: 20%;
+  margin:0 auto;
+  font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
   width: 10%;
   margin:0 auto;
+  font-family: 'Montserrat', sans-serif;
 }
+
 .top-container {
   margin-top: 100px;
 }
