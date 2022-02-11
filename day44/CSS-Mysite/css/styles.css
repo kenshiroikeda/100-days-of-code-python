@@ -2,30 +2,45 @@ body {
   margin: 0;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
-  background-color: #FFF8F3;
+  color: #40514E;
 }
 h1 {
   width: 35%;
-  margin:50px auto 0 auto;
-  font-family: 'Montserrat', sans-serif;
+  margin:0px auto 0 auto;
   font-size: 4rem;
   color: #66BFBF;
   line-height: 4;
+  padding: 50px 0 0 0;
 }
 
 h2 {
   width: 25%;
   margin: 40px auto;
-  font-family: 'Montserrat', sans-serif;
+
   font-size: 2.5rem;
   color: #66BFBF;
 }
 h3, a {
   color: #11999E;
+  font-weight: bold;
 }
 .top-container {
-  margin-top: 100px;
+  background-color: #EAF6F6;
 }
+.bottom-container {
+  background-color: #66BFBF;
+}
+.bottom-container > p {
+  color: #EAF6F6;
+  padding-bottom: 32px;
+  margin-bottom: 0;
+}
+.bottom-container > a {
+  color: #11999E;
+  margin: 24px 32px 16px;
+  display: inline-block;
+}
+
 .skill-row{
   margin: 100px auto;
   width: 50%;
@@ -74,9 +89,16 @@ h3, a {
   text-decoration: none;
   display: block;
   width: 132px;
-  margin: 16px auto;
+  margin: 40px auto;
 }
-
+hr {
+    border-style: none;
+    border-top-style: dotted;
+    border-width: 10px;
+    border-color: #C0D8C0;
+    width: 6%;
+    margin: 120px auto
+}
 .btn:hover {
   background: #30e3cb;
   background-image: -webkit-linear-gradient(top, #30e3cb, #2bc4ad);
