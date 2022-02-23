@@ -1,6 +1,29 @@
 from flask import Flask
 app = Flask(__name__)
 
+
+def make_bold(fun):
+    def wrapper_function():
+        html_str = '<b>' + fun() + '</b>'
+        return html_str
+    return wrapper_function
+
+
+def make_emphasis(fun):
+    def wrapper_function():
+        html_str = '<em>' + fun() + '</em>'
+        return html_str
+    return wrapper_function
+
+
+def make_underlined(fun):
+    def wrapper_function():
+        html_str = '<u>' + fun() + '</u>'
+        return html_str
+    return wrapper_function
+
+
+
 @app.route('/')
 def hello_world():
     return '<h1 style="text-align: center">Hello, World!</h1>' \
@@ -9,6 +32,9 @@ def hello_world():
 
 
 @app.route('/bye')
+@make_bold
+@make_emphasis
+@make_underlined
 def day_bye():
     return 'Bye'
 
