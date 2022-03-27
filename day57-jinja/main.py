@@ -28,6 +28,13 @@ def guess(user_name):
                            current_year=datetime.datetime.now().year)
 
 
+@app.route('/blog')
+def blog():
+    blog_url = "https://api.npoint.io/c790b4d5cab58020d391"
+    res = requests.get(blog_url)
+    return render_template("blog.html", contents=res.json())
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
